@@ -2,185 +2,69 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Eddy</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" id="themeColor" content="#FFFFFF">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500;600&display=swap">
-<link rel="stylesheet" href="style.css">
-<!-- Settles a forced Light or Dark before the first paint, so an override never flashes
-     the other theme while app.js is still loading. Auto needs nothing: the CSS handles it. -->
-<script>try{var t=localStorage.getItem("eddy-theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t);}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eddy — Privacy Policy</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    max-width: 38rem; margin: 0 auto; padding: 2.5rem 1.25rem 5rem;
+    font: 400 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #1c1c1e; background: #fff;
+  }
+  @media (prefers-color-scheme: dark) { body { color: #f2f2f5; background: #121214; } }
+  h1 { font-size: 1.9rem; font-weight: 600; line-height: 1.2; margin: 0 0 1.5rem; }
+  h2 { font-size: 1.25rem; font-weight: 600; margin: 2.5rem 0 0.75rem; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 1.75rem 0 0.5rem; }
+  p, li { margin: 0 0 1rem; }
+  ul { padding-left: 1.25rem; }
+  a { color: #0a66d0; overflow-wrap: anywhere; }
+  @media (prefers-color-scheme: dark) { a { color: #6fa8f5; } }
+  strong { font-weight: 600; }
+  code { font-size: 0.95em; }
+</style>
 </head>
 <body>
-
-<div id="app">
-  <div class="bar" id="topbar">
-    <div class="stat"><span class="label" id="modeLabel">Play</span><div id="score">0</div><span id="rankLine"></span></div>
-    <div class="stat mid" id="clockStat"><span class="label">Time</span><b id="clock">60</b></div>
-    <div class="stat right">
-      <div class="toprow"><button class="chip" id="mute" type="button">Sound on</button><button class="chip" id="quit" type="button">Quit</button></div>
-      <span class="label" id="bestLabel">Best</span><b id="best">0</b>
-    </div>
-  </div>
-  <div class="stagebar" id="stagebar">
-    <span class="label">Stage <b id="stageNo">1</b></span>
-    <div class="goal"><i id="goalFill"></i></div>
-    <span class="label"><b id="goalGot">0</b> / <b id="goalNeed">10</b></span>
-  </div>
-  <div id="board" role="grid" aria-label="Board. Arrow keys to move, Enter to place, H to hold."></div>
-  <div id="tray">
-    <button class="slot" id="holdSlot" type="button" aria-label="Hold: swap the current tile with the held one. Key H."><span class="label">Hold</span><div id="holdTile"></div></button>
-    <div class="slot" id="curSlot"><div id="curTile"></div><span id="curTag">Tap a square</span></div>
-    <div class="slot" id="nextSlot"><span class="label">Next</span><div class="nexts"><div id="next1"></div><div id="next2"></div></div></div>
-  </div>
-  <div id="hintrow"><div class="hint" id="hint"></div></div>
-</div>
-<div id="lens" hidden></div>
-
-<!-- Home -->
-<div class="veil" id="home">
-  <div class="card">
-    <h1>Eddy<em>.</em></h1>
-    <div class="demo" id="demo"></div>
-    <div class="month">
-      <div class="mrow"><span class="label">Your best</span><span class="label" id="mEnds"></span></div>
-      <div class="mbig">
-        <div><span class="label">Today</span><b id="bDay">0</b><span class="rk" id="rDay"></span></div>
-        <div><span class="label">This week</span><b id="bWeek">0</b><span class="rk" id="rWeek"></span></div>
-        <div><span class="label">This month</span><b id="bMonth">0</b><span class="rk" id="rMonth"></span></div>
-      </div>
-    </div>
-    <div class="buttons">
-      <button class="btn big" id="playBtn" type="button">Play<small>Beat your best</small></button>
-    </div>
-    <nav class="navrow">
-      <button class="nav" id="boardsBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v4M8 20h8"/></svg>Your records</button>
-      <button class="nav" id="profileBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Profile</button>
-      <button class="nav" id="howBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5v.01"/></svg>How to play</button>
-    </nav>
-  </div>
-</div>
-
-<!-- How to play -->
-<div class="veil" id="how" hidden>
-  <div class="card">
-    <h2>How to play</h2>
-    <ul class="rules">
-      <li><span>Put each arrow on an empty square. Arrows that point into each other make a <b>stream</b>.</span></li>
-      <li><span>Run a stream into <b>Steady Eddy</b> and his tummy fills up &mdash; one for every tile feeding him.</span></li>
-      <li><span><b>Tap him</b> to drain the lot and bank the points. Beat the stage number before the clock runs out.</span></li>
-    </ul>
-    <ul class="rules">
-      <li><span>A fat tummy is much better: 5 scores 250, but 20 scores 4,000.</span></li>
-      <li><span>A tummy of <b>8 or more sets off every other Steady Eddy on the board at once</b> &mdash; a chain. Load them all up before you tap.</span></li>
-      <li><span>Clearing a stage is the <b>only</b> way to win time, and it pays <b>2 seconds for every point you went over</b>.</span></li>
-      <li><span>Deep stages <b>ask for more and pay less</b> &mdash; from 10 at the start up to 20, for a fraction of the time back. However good you are, a run runs out in the end.</span></li>
-      <li><span>Later stages have <b>two or three Steady Eddies</b>, and every one of them multiplies what a drain is worth.</span></li>
-      <li><span>An arrow pointing at a wall, a rock, or round in a circle goes <b>grey</b> &mdash; stuck for good, and taking up a square.</span></li>
-      <li><span><b>Rocks</b> are there from the start of a stage and never fall during one. A drain beside one smashes it for 100.</span></li>
-      <li><span><b>Hold</b> puts the tile in your hand aside for later.</span></li>
-    </ul>
-    <h2>Your records</h2>
-    <ul class="rules">
-      <li><span>Eddy keeps your <b>best score</b> for <b>today</b>, <b>this week</b> and <b>this month</b>, and every game behind them.</span></li>
-      <li><span>Today starts fresh at midnight, the week every Monday, and the month on the 1st.</span></li>
-      <li><span>It all lives on this device and <b>works with no connection</b> &mdash; play on a train if you like.</span></li>
-    </ul>
-    <div class="buttons">
-      <button class="btn" id="howShow" type="button">Show me how<small>Four taps, about twenty seconds</small></button>
-      <button class="btn ghost" id="howOk" type="button">Back</button>
-    </div>
-  </div>
-</div>
-
-<!-- Leaderboards -->
-<div class="veil" id="boards" hidden>
-  <div class="card wide">
-    <div class="head"><button class="back" type="button" data-home>‹ Back</button><h2>Your records</h2><span></span></div>
-    <div class="tabs" role="tablist">
-      <button class="tab on" role="tab" id="tab-day" type="button" aria-selected="true">Today</button>
-      <button class="tab" role="tab" id="tab-week" type="button" aria-selected="false">This week</button>
-      <button class="tab" role="tab" id="tab-month" type="button" aria-selected="false">This month</button>
-    </div>
-    <div class="period" id="period"></div>
-    <ol class="rows" id="rows"></ol>
-    <p class="note">Every game you played, best first. An ads tag means that run watched ads for extra time.</p>
-  </div>
-</div>
-
-<!-- Profile -->
-<div class="veil" id="profile" hidden>
-  <div class="card wide">
-    <div class="head"><button class="back" type="button" data-home>‹ Back</button><h2>Profile</h2><span></span></div>
-    <div class="who">
-      <div class="avatar" id="avatar">?</div>
-      <div><b id="pName">Guest</b><span class="label" id="pSub"></span></div>
-    </div>
-    <div class="section"><h3>Your records</h3><div class="statgrid" id="pBoards"></div></div>
-    <div class="section"><h3>All time</h3><div class="statgrid" id="pAll"></div></div>
-    <div class="section"><h3>Recent games</h3><ol class="rows small" id="pRecent"></ol></div>
-    <div class="section"><h3>Account</h3><div class="kv" id="pAccount"></div></div>
-    <div class="section">
-      <h3>Settings</h3>
-      <div class="setrow"><span>Sound</span><button class="switch" id="soundSwitch" type="button" role="switch" aria-checked="true" aria-label="Sound"></button></div>
-      <div class="setrow"><span>Appearance</span><div class="tabs seg" role="tablist" aria-label="Appearance"><button class="tab" id="theme-auto" type="button" role="tab">Auto</button><button class="tab" id="theme-light" type="button" role="tab">Light</button><button class="tab" id="theme-dark" type="button" role="tab">Dark</button></div></div>      <button class="btn danger" id="resetBtn" type="button">Reset this device's data</button>
-    </div>
-  </div>
-</div>
-
-<!-- Out of time, or nowhere left to play: a rewarded ad buys the run more clock -->
-<div class="veil" id="revive" hidden>
-  <div class="card">
-    <h2 id="reviveTitle">Out of time</h2>
-    <div id="reviveScore">0</div>
-    <p id="reviveWhat">Watch a short ad for 15 more seconds and carry on with your score.</p>
-    <span class="label" id="reviveLeft"></span>
-    <div class="buttons">
-      <button class="btn" id="reviveBtn" type="button">Watch ad<small id="reviveSub">+15 seconds</small></button>
-      <button class="btn ghost" id="reviveNo" type="button">End game</button>
-    </div>
-  </div>
-</div>
-
-<!-- Game over -->
-<div class="veil" id="over" hidden>
-  <div class="card">
-    <h2 id="overTitle">Out of time</h2>
-    <div id="finalScore">0</div>
-    <span class="badge" id="newBest" hidden>NEW BEST</span>
-    <div class="rankbox" id="rankBox">
-      <div><span class="label">Today</span><b id="oDay">–</b><small id="nDay"></small></div>
-      <div><span class="label">This week</span><b id="oWeek">–</b><small id="nWeek"></small></div>
-      <div><span class="label">This month</span><b id="oMonth">–</b><small id="nMonth"></small></div>
-    </div>
-    <div class="grid4">
-      <div><span class="label">Stage</span><b id="oStage">1</b></div>
-      <div><span class="label">Drains</span><b id="oCashed">0</b></div>
-      <div><span class="label">Fattest</span><b id="oBiggest">0</b></div>
-      <div><span class="label">Best hit</span><b id="oHit">0</b></div>
-    </div>
-    <div class="verify" id="verify"></div>
-    <div class="buttons">
-      <button class="btn" id="againBtn" type="button">Play again</button>
-      <button class="btn ghost" type="button" data-home>Home</button>
-    </div>
-  </div>
-</div>
-
-<!-- Ad break -->
-<div class="veil" id="ad" hidden>
-  <div class="card">
-    <h2>Ad break</h2>
-    <div class="adbox">Placeholder interstitial</div>
-    <p class="note">Ads keep Eddy free to play.</p>
-    <div class="buttons"><button class="btn" id="adBtn" type="button" disabled>Continue</button></div>
-  </div>
-</div>
-
-<script src="eddy-sim.js"></script>
-<script src="backend.js"></script>
-<script src="app.js"></script>
+<h1>Eddy — Privacy Policy</h1>
+<p><strong>Last updated: 2 November 2026</strong></p>
+<p>Eddy is a puzzle game made by Tom Glynn-Smith. This policy explains what the app does and does not do with information about you. It is short because the app does very little.</p>
+<h2>What Eddy stores</h2>
+<p>Eddy keeps your scores and settings <strong>on your device only</strong>:</p>
+<ul>
+  <li>your best score for today, this week and this month, and the games behind them</li>
+  <li>your lifetime totals, such as games played and biggest drain</li>
+  <li>your settings: sound on or off, and light or dark appearance</li>
+</ul>
+<p><strong>None of this is sent anywhere.</strong> Eddy has no account system, no sign-in and no server of its own. The game itself works with no internet connection at all. If you delete the app, or reset your data from the Profile screen, that information is gone — we cannot recover it, because we never had it.</p>
+<h2>Advertising</h2>
+<p>Eddy is free and is paid for by advertising, supplied by <strong>Google AdMob</strong>. Ads are the only part of the app that connects to the internet.</p>
+<p>To show ads, Google may collect and process:</p>
+<ul>
+  <li>a device advertising identifier</li>
+  <li>approximate location, derived from your IP address</li>
+  <li>information about your device, such as its model and operating system version</li>
+  <li>how you interacted with an ad, so that advertisers are billed correctly and the same ad is not shown to you endlessly</li>
+</ul>
+<p>This happens inside Google's own software, not ours. <strong>We never see it, receive it or store it.</strong> How Google uses it is described in Google's own policies:</p>
+<ul>
+  <li>Google Privacy Policy — <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></li>
+  <li>How Google uses information from sites or apps that use its services — <a href="https://policies.google.com/technologies/partner-sites">https://policies.google.com/technologies/partner-sites</a></li>
+</ul>
+<h3>Your choice about tracking</h3>
+<p>The first time it is relevant, Eddy asks whether you are willing to be tracked across other companies' apps and websites, using Apple's standard App Tracking Transparency prompt.</p>
+<ul>
+  <li><strong>If you decline</strong>, ads are not personalised. You will see exactly as many ads, and the game behaves identically in every other way.</li>
+  <li>You can change your mind at any time in <strong>Settings → Privacy &amp; Security → Tracking</strong> on your iPhone, or turn tracking off for every app there.</li>
+</ul>
+<p>Where required by law, Eddy also shows Google's consent form for advertising, and respects the choice you make in it.</p>
+<h2>Children</h2>
+<p>Eddy is not directed at children under 13 and we do not knowingly collect information about them. If you believe a child has provided information through this app, contact us and we will help you deal with it, though in practice there is nothing held on our side to delete.</p>
+<h2>Analytics</h2>
+<p>We run no analytics of our own. We do not know how many people play Eddy, how long for, or what scores they get. The only figures we ever see are the aggregate advertising reports Google provides, which contain no information about individuals.</p>
+<h2>Your rights</h2>
+<p>Because we hold no personal information about you, there is nothing for us to show you, correct or delete. For anything Google holds, use the links above, which include Google's own tools for access and deletion.</p>
+<h2>Changes</h2>
+<p>If this policy changes, the date at the top changes with it, and the current version is always at this address.</p>
+<h2>Contact</h2>
+<p>Questions about this policy: <strong><a href="mailto:tomglynnsmith@outlook.com">tomglynnsmith@outlook.com</a></strong></p>
 </body>
 </html>
